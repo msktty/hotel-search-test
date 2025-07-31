@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ホテル情報自動入力テスト</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1em;
+    }
+    input, select {
+      display: block;
+      margin: 1em 0;
+      padding: 0.5em;
+      width: 100%;
+      font-size: 1.2em;
+    }
+  </style>
+  <script>
+    function initAutocomplete() {
+      const autocompleteInput = document.getElementById("autocomplete");
+      const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, {
+        types: ["establishment"],
+        componentRestrictions: { country: "jp" },
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) return;
+
+        document.getElementById("hotelName").value = place.name || "";
+        document.getElementById("address").value = place.formatted_address || "";
+
+        let phone = "";
+        if (place.international_phone_number) {
+          phone = place.international_phone_number;
+        } else if (place.formatted_phone_number) {
+          phone = place.formatted_phone_number;
+        }
+        document.getElementById("phone").value = phone;
+
+        document.getElementById("notes").value =
+          place.geometry.location.lat() + ", " + place.geometry.location.lng();
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSMQROt8-gk7EPKQZCc07EZ7bb8cEdGdg&libraries=places&callback=initAutocomplete" async defer></script>
+</head>
+<body>
+  <h1>ホテル情報自動入力テスト</h1>
+  <input id="autocomplete" type="text" placeholder="ホテル名を入力" />
+  <input id="hotelName" type="text" placeholder="ホテル名（正式）" />
+  <input id="address" type="text" placeholder="住所" />
+  <input id="phone" type="text" placeholder="電話番号" />
+  <input id="notes" type="text" placeholder="備考" />
+</body>
+</html>
