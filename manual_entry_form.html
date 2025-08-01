@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ホテル新規登録</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, textarea {
+      width: 80%;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    .emoji-select {
+      width: 100px;
+    }
+    .news-block {
+      margin-top: 15px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    .marquee {
+      margin-top: 30px;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      background: #fff;
+    }
+    .marquee span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 15s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>ホテル新規登録</h1>
+  <form id="hotelForm">
+    <label>検索用イニシャル：<input type="text" name="initial" maxlength="1"></label>
+    <label>ホテル名：<input type="text" name="name"></label>
+    <label>住所：<input type="text" name="address"></label>
+    <label>電話番号：<input type="tel" name="tel"></label>
+    <label>備考：<input type="text" name="note"></label><div class="news-block">
+  <label>
+    新着情報1：<select class="emoji-select" name="emoji1">
+      <option value="🆕">🆕</option>
+      <option value="📌">📌</option>
+      <option value="🔔">🔔</option>
+    </select>
+    <input type="text" name="news1">
+  </label>
+  <label>
+    新着情報2：<select class="emoji-select" name="emoji2">
+      <option value="🆕">🆕</option>
+      <option value="📌">📌</option>
+      <option value="🔔">🔔</option>
+    </select>
+    <input type="text" name="news2">
+  </label>
+  <label>
+    新着情報3：<select class="emoji-select" name="emoji3">
+      <option value="🆕">🆕</option>
+      <option value="📌">📌</option>
+      <option value="🔔">🔔</option>
+    </select>
+    <input type="text" name="news3">
+  </label>
+</div>
+
+<button type="submit">保存</button>
+
+  </form>  <div class="marquee" id="marquee">
+    <span id="marqueeText"></span>
+  </div>  <script>
+    document.getElementById('hotelForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const initial = form.initial.value.trim();
+      const name = form.name.value.trim();
+      const address = form.address.value.trim();
+      const tel = form.tel.value.trim();
+      const note = form.note.value.trim();
+      const news = [];
+
+      for (let i = 1; i <= 3; i++) {
+        const emoji = form[`emoji${i}`].value;
+        const text = form[`news${i}`].value.trim();
+        if (text) news.push(`${emoji} ${text}`);
+      }
+
+      const confirmText = `この内容で保存しますか？\n\n` +
+        `イニシャル: ${initial}\nホテル名: ${name}\n住所: ${address}\n電話番号: ${tel}\n備考: ${note}\n新着: ${news.join(' / ')}`;
+
+      if (confirm(confirmText)) {
+        // 保存処理は後で実装予定
+        document.getElementById('marqueeText').textContent = news.join('　　　');
+        
+      if (confirm(confirmText)) {
+        const query = new URLSearchParams();
+        news.forEach((line, idx) => query.set(`news${idx+1}`, line));
+        const url = `index.html?${query.toString()}`;
+        window.location.href = url;
+      }
+
+      }
+    });
+  </script></body>
+</html>

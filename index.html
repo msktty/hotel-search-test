@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>札幌ホテルリスト</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(145deg, #c0c0c0, #e0e0e0);
+      font-family: 'Segoe UI', sans-serif;
+      color: #222;
+      text-align: center;
+      font-size: 18px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 0 1px 0 #fff;
+      white-space: nowrap;
+    }
+    .btn-group, .alpha-group {
+      display: grid;
+      gap: 16px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .btn-group {
+      grid-template-columns: repeat(5, 50px);
+    }
+    .alpha-group {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 500px;
+    }
+    .metal-button {
+      width: 60px;
+      height: 60px;
+      font-size: 18px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(to bottom, #f0f0f0, #d0d0d0 40%, #b0b0b0 60%, #e0e0e0);
+      border: 2px solid #999;
+      text-shadow: 0 1px 1px #fff;
+      box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.3),
+        inset 0 2px 3px rgba(255, 255, 255, 0.7),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.3);
+    }
+    .long-button {
+      font-size: 18px;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-weight: bold;
+      background: linear-gradient(to bottom, #f0f0f0, #d0d0d0 40%, #b0b0b0 60%, #e0e0e0);
+      border: 2px solid #999;
+      text-shadow: 0 1px 1px #fff;
+      box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.3),
+        inset 0 2px 3px rgba(255, 255, 255, 0.7),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.3);
+    }
+    .results {
+      margin: 30px auto;
+      max-width: 90%;
+      text-align: left;
+      font-size: 14px;
+    }
+    .footer-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    button.footer {
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+    }
+    #adminPanel {
+      display: none;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    #adminControls {
+      margin-top: 10px;
+    }
+    #gear-button {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  
+    .marquee {
+      margin-top: 10px;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      background: #fff;
+    }
+    .marquee span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 15s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
+  </style>
+</head>
+<body>
+  <img id="gear-button" src="gear.svg" alt="管理" onclick="toggleAdmin()">
+  <h1>札幌ホテルリスト</h1>
+  <div id="adminPanel" style="display: none; margin-top: 20px;">
+    パスワード：
+    <input type="password" id="adminPass">
+    <button type="button" onclick="togglePw()">👁</button>
+    <button onclick="checkAdmin()">ログイン</button>
+  </div>
+
+
+  <div class="btn-group">
+    <button class="metal-button">あ</button>
+    <button class="metal-button">か</button>
+    <button class="metal-button">さ</button>
+    <button class="metal-button">た</button>
+    <button class="metal-button">な</button>
+    <button class="metal-button">は</button>
+    <button class="metal-button">ま</button>
+    <button class="metal-button">や</button>
+    <button class="metal-button">ら</button>
+    <button class="metal-button">わ</button>
+  </div>
+
+  <div class="alpha-group">
+    <button class="long-button">ABCDE</button>
+    <button class="long-button">FGHIJ</button>
+    <button class="long-button">KLMNO</button>
+    <button class="long-button">PQRST</button>
+    <button class="long-button">UVWX</button>
+    <button class="long-button">YZ</button>
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <div class="footer-buttons">
+  <div class="marquee" id="marquee1"><span id="marqueeText1"></span></div>
+  <div class="marquee" id="marquee2"><span id="marqueeText2"></span></div>
+  <div class="marquee" id="marquee3"><span id="marqueeText3"></span></div>
+
+    <button class="footer" onclick="window.print()">プリントアウト</button>
+    <button class="footer" id="installBtn">ホームに追加</button>
+  </div>
+
+  <div id="adminPanel">
+    パスワード：<input type="password" id="adminPass">
+    <button onclick="checkAdmin()">ログイン</button>
+    <div id="adminControls" style="display:none;">
+      <p>CSVインポート：<input type="file" accept=".csv"></p>
+      <p><button>エクスポート</button></p>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('installBtn');
+        btn.style.display = 'inline-block';
+        btn.onclick = () => {
+          btn.style.display = 'none';
+          deferredPrompt.prompt();
+        };
+      });
+    }
+
+    function toggleAdmin() {
+      document.getElementById('adminPanel').style.display = 'block';
+    }
+    function checkAdmin() {
+      const pw = document.getElementById('adminPass').value;
+      if (pw === 'bando') {
+        document.getElementById('adminControls').style.display = 'block';
+      } else {
+        alert("パスワードが違います！");
+      }
+    }
+
+    const buttons = document.querySelectorAll('.metal-button, .long-button');
+    const results = document.getElementById('results');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const label = btn.textContent.trim();
+        results.innerHTML = `<p><a href="#">${label}ホテル候補1</a> ｜ <a href="#">${label}ホテル候補2</a></p>`;
+      });
+    });
+  
+    function toggleAdmin() {
+      const panel = document.getElementById('adminPanel');
+      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    }
+    function togglePw() {
+      const pwInput = document.getElementById('adminPass');
+      pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+    }
+    function checkAdmin() {
+      const pw = document.getElementById('adminPass').value.trim();
+      if (pw === 'bando') {
+        location.href = 'manual_entry_form.html';
+      } else {
+        alert("パスワードが違います！");
+      }
+    }
+
+
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const today = new Date().toISOString().split('T')[0];
+    for (let i = 1; i <= 3; i++) {
+      const text = urlParams.get(`news${i}`);
+      const el = document.getElementById(`marqueeText${i}`);
+      const box = document.getElementById(`marquee${i}`);
+      if (text && el && box) {
+        el.textContent = `${text}（${today}）`;
+        box.style.display = 'block';
+      } else if (box) {
+        box.style.display = 'none';
+      }
+    }
+
+
+</script>
+
+  <footer style="margin-top:40px; font-size:12px; color:#666;">Powerd by BANDO©2025</footer>
+</body>
+</html>
