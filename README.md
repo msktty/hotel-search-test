@@ -1,1 +1,1 @@
-# hotel-search-test
+# sapporo-hotel-list
