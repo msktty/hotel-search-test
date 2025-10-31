@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>掲示板 - 札幌ホテルリスト</title>
+<style>
+body{
+  font-family:Meiryo,'メイリオ',sans-serif;
+  background:linear-gradient(145deg,#c0c0c0,#e0e0e0);
+  margin:0;
+  padding:16px;
+}
+.container{max-width:800px;margin:0 auto;}
+h1{text-align:center;margin-bottom:20px;}
+.post-form{background:#fff;padding:15px;border-radius:10px;margin-bottom:20px;}
+.post-form textarea{width:100%;height:80px;margin-bottom:10px;padding:8px;}
+.post-form button{padding:8px 16px;background:#4CAF50;color:white;border:none;border-radius:5px;cursor:pointer;}
+.posts .post{background:#fff;padding:15px;border-radius:10px;margin-bottom:10px;}
+.post .meta{color:#666;font-size:0.9em;margin-bottom:5px;}
+.post .content{white-space:pre-wrap;}
+.back-btn{display:block;text-align:center;margin-top:20px;padding:10px;background:#2196F3;color:white;text-decoration:none;border-radius:5px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📝 ホテル情報掲示板</h1>
+  
+  <div class="post-form">
+    <textarea id="postContent" placeholder="ホテルに関する情報や感想を共有しましょう..."></textarea>
+    <button onclick="postMessage()">投稿する</button>
+  </div>
+  
+  <div class="posts" id="postsContainer">
+    <!-- 投稿がここに表示されます -->
+  </div>
+  
+  <a href="index.html" class="back-btn">🏠 トップに戻る</a>
+</div>
+
+<script>
+function loadPosts(){
+  const posts = JSON.parse(localStorage.getItem('hotel_bbs') || '[]');
+  const container = document.getElementById('postsContainer');
+  
+  container.innerHTML = posts.map(post => `
+    <div class="post">
+      <div class="meta">${new Date(post.timestamp).toLocaleString()}</div>
+      <div class="content">${escapeHtml(post.content)}</div>
+    </div>
+  `).join('');
+}
+
+function postMessage(){
+  const content = document.getElementById('postContent').value.trim();
+  if(!content){
+    alert('投稿内容を入力してください');
+    return;
+  }
+  
+  const posts = JSON.parse(localStorage.getItem('hotel_bbs') || '[]');
+  posts.unshift({
+    content: content,
+    timestamp: new Date().toISOString()
+  });
+  
+  // 最新100件だけ保持
+  if(posts.length > 100) posts.length = 100;
+  
+  localStorage.setItem('hotel_bbs', JSON.stringify(posts));
+  document.getElementById('postContent').value = '';
+  loadPosts();
+}
+
+function escapeHtml(text){
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// 初期読み込み
+loadPosts();
+</script>
+</body>
+</html>
